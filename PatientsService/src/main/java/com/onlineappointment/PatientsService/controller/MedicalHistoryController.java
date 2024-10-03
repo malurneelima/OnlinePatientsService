@@ -35,7 +35,7 @@ public class MedicalHistoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MedicalHistory> getMedicalHistoryById(@PathVariable Long id) {
-        return ResponseEntity.of(medicalHistoryService.getMedicalHistory(id));
+        return ResponseEntity.ok(medicalHistoryService.getMedicalHistory(id));
     }
 
     @PutMapping("/{id}")

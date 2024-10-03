@@ -7,24 +7,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.onlineappointment.PatientsService.entity.MedicalHistory;
+import com.onlineappointment.PatientsService.exception.ResourceNotFoundException;
+import com.onlineappointment.PatientsService.exception.ServiceUnavailableException;
 import com.onlineappointment.PatientsService.repository.MedicalHistoryRepository;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Service
 public class MedicalHistoryService {
 	 @Autowired
 	    private MedicalHistoryRepository medicalHistoryRepository;
 
+	 	@CircuitBreaker(name="addMedicalHistorydb", fallbackMethod = "addMedicalHistoryFallback")
 	    public MedicalHistory addMedicalHistory(Long patientId, MedicalHistory medicalHistory) {
 	        medicalHistory.setPatientId(patientId);
 	        return medicalHistoryRepository.save(medicalHistory);
 	    }
-
+	 	public MedicalHistory addMedicalHistoryFallback(Long patientId, MedicalHistory medicalHistory,Throwable throwable) {
+	 		System.out.println("Fallback method triggered for addMedicalHistory as :"+throwable.getMessage());
+	      	 throw new ServiceUnavailableException("DB service");
+		}
+	 	
 	    public List<MedicalHistory> getMedicalHistoryByPatientId(Long patientId) {
 	        return medicalHistoryRepository.findByPatientId(patientId);
 	    }
 
-	    public Optional<MedicalHistory> getMedicalHistory(Long id) {
-	        return medicalHistoryRepository.findById(id);
+	    public MedicalHistory getMedicalHistory(Long id) {
+	        return medicalHistoryRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("getMedicalHistory", "id", id));
 	    }
 
 	    public MedicalHistory updateMedicalHistory(Long id, MedicalHistory medicalHistory) {

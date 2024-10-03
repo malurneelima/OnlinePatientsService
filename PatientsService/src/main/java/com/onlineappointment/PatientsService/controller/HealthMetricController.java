@@ -35,7 +35,7 @@ public class HealthMetricController {
 
     @GetMapping("/{id}")
     public ResponseEntity<HealthMetric> getHealthMetric(@PathVariable Long id) {
-        return ResponseEntity.of(healthMetricService.getHealthMetric(id));
+        return ResponseEntity.ok(healthMetricService.getHealthMetric(id));
     }
 
     @PutMapping("/{id}")

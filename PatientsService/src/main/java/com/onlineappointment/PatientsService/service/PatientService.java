@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.onlineappointment.PatientsService.entity.Patient;
+import com.onlineappointment.PatientsService.exception.ResourceNotFoundException;
 import com.onlineappointment.PatientsService.repository.PatientRepository;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -22,8 +23,8 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-    public Optional<Patient> getPatient(Long id) {
-        return patientRepository.findById(id);
+    public Patient getPatient(Long id) {
+        return patientRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("getPatient","id",id));
     }
     @CircuitBreaker(name="getAllPatientsdb",fallbackMethod ="getAllPatientsFallback" )
     public List<Patient> getAllPatients() {

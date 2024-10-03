@@ -3,6 +3,8 @@ package com.onlineappointment.PatientsService.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +29,7 @@ public class PatientController {
 
     @GetMapping("/patient")
     public ResponseEntity<Patient> getPatient(@RequestParam Long id) {
-        return ResponseEntity.of(patientService.getPatient(id));
+        return new ResponseEntity<>( patientService.getPatient(id),HttpStatus.OK);
     }
 
     @GetMapping("/patients")
